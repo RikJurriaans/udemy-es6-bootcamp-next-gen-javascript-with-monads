@@ -1,0 +1,14 @@
+{
+  "name": "y",
+  "version": "1.0.0",
+  "description": "Udemy project",
+  "main": "app.js",
+  "scripts": {
+    "dev": "lite-server"
+  },
+  "author": "RikJurriaans",
+  "license": "ISC",
+  "devDependencies": {
+    "lite-server": "^2.3.0"
+  }
+}
