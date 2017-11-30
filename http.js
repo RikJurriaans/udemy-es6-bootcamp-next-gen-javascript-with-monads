@@ -1,5 +1,5 @@
 export class http {
-    // String -> Promise[IO ()]
+    // String -> Promise[Either[JS Object, Error]]
     static fetchData(url) {
         return new Promise((resolve, reject) => {
             const HTTP = new XMLHttpRequest();
