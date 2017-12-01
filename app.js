@@ -20,6 +20,6 @@ function searchWeather() {
                             .then(updateField)
                             .catch(errorOut));
 
-        // Here you can give an error message displaying the user.
-        MAYBE_CITY_WEATHER.orElseRun(() => alert("There has been an error."));
-    }
+    // Here you can give an error message displaying the user.
+    MAYBE_CITY_WEATHER.orElseRun(() => alert("There has been an error."));
+}
