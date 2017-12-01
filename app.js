@@ -1,22 +1,9 @@
 import * as ELEMENTS from './elements.js';
 import { http } from './http.js';
 import { WeatherData, WEATHER_PROXY_HANDLER } from './weather-data.js';
+import { kleisli } from './kleisli.js';
 
 ELEMENTS.ELEMENT_SEARCH_BUTTON.addEventListener('click', searchWeather);
-
-class Kleisli {
-    // f :: x -> Monad y
-    constructor(f) {
-        // zo voer je de zooi uit
-        this.run = x => f(x);
-
-        // zo kunnen we kleisli's aan elkaar lijmen
-        this.pipe = g => new Kleisli(x => this.run(x).then(g.run));
-
-        // zo kun je meer dan 1 kleisli aan elkaar lijmen
-        this.pipeTo = g => new Kleisli(x => this.run(x).then(g));
-    };
-}
 
 function updateWeatherInterface(jsonData) {
     console.log(jsonData);
@@ -25,8 +12,6 @@ function updateWeatherInterface(jsonData) {
 function errorOut(errorMessage) {
     console.log(errorMessage);
 }
-
-let kleisli = (f) => new Kleisli(f);
 
 const APP_ID = "3ffbb4d7c4c147eeecb26ca4e8b337c0";
 
