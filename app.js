@@ -1,5 +1,5 @@
 import * as ELEMENTS from './elements.js';
-import { http } from './http.js';
+import { GETRequest } from './http.js';
 import { WeatherData, WEATHER_PROXY_HANDLER } from './weather-data.js';
 import { kleisli } from './kleisli.js';
 
@@ -14,14 +14,15 @@ function updateWeatherInterface(weatherData) {
 }
 
 function errorOut(httpStatus) {
-    // Show not found element.
     console.log("The api responded with something different than 200:" + httpStatus);
 }
 
 const APP_ID = "3ffbb4d7c4c147eeecb26ca4e8b337c0";
 
-let cityNameToAPIUrl = (cityName) =>
+let cityNameToAPIUrl = cityName =>
     'http://api.openweathermap.org/data/2.5/weather?q=' + cityName + "&units=metric&appid=" + APP_ID;
+
+const setAttr = x => (attr, val) => x[attr] = val;
 
 let weatherJsonToWeatherData = cityName => weatherData => {
     const WEATHER_DATA = new WeatherData(cityName, weatherData.weather[0].description);
@@ -31,19 +32,20 @@ let weatherJsonToWeatherData = cityName => weatherData => {
 };
 
 function searchWeather() {
+    // Dit is nog een beetje imperative.
     ELEMENTS.ELEMENT_LOADING_TEXT.style.display = 'block';
 
     const CITY_NAME = ELEMENTS.ELEMENT_SEARCHED_CITY.value.trim();
+
+    // Ik kan hier monad transformers voor gebruiken denk ik.
     const MAYBE_CITY_WEATHER =
         Maybe
-          .fromFalsy(CITY_NAME)
-          .map(cityNameToAPIUrl)
-          .map((url) =>
-              kleisli(http.fetchData)
-                  .pipeTo(weatherJsonToWeatherData(CITY_NAME))
-                  .run(url)
-                  .then(updateWeatherInterface)
-                  .catch(errorOut));
-
-    MAYBE_CITY_WEATHER.orElseRun(() => alert("Field is empty."));
+        .fromFalsy(CITY_NAME)
+        .toEither(() => alert("Field is empty."))
+        .map(cityNameToAPIUrl)
+        .map(GETRequest)
+        .map(t =>
+             t.map(weatherJsonToWeatherData(CITY_NAME))
+             .fork(errorOut,
+                   updateWeatherInterface));
 }

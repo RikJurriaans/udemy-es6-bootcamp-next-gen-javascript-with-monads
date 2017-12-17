@@ -1,18 +1,12 @@
-export class http {
-    // string -> Promise jsObject
-    static fetchData(url) {
-        return new Promise((resolve, reject) => {
-            const HTTP = new XMLHttpRequest();
-            HTTP.open('GET', url);
-            HTTP.onreadystatechange = function() {
-                if (HTTP.readyState == XMLHttpRequest.DONE && HTTP.status == 200) {
-                    const RESPONSE_DATA = JSON.parse(HTTP.responseText);
-                    resolve(RESPONSE_DATA);
-                } else if (HTTP.readyState == XMLHttpRequest.DONE) {
-                    reject(HTTP.status);
-                }
-            };
-            HTTP.send();
-        });
-    }
-}
+import Task from './vendor/data.task.umd.min.js';
+
+export const GETRequest = url =>
+      new Task((rej, res) => {
+          const HTTP = new XMLHttpRequest();
+          HTTP.open('GET', url);
+          HTTP.onreadystatechange = () =>
+              (HTTP.readyState == XMLHttpRequest.DONE && HTTP.status == 200) ?
+              res(JSON.parse(HTTP.responseText)) :
+              rej(HTTP.status);
+          HTTP.send();
+      });
